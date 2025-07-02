@@ -1,7 +1,9 @@
+
 import streamlit as st
 import pandas as pd
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
+from fpdf import FPDF
 import time
 import io
 
@@ -44,10 +46,14 @@ if st.button("🔍 Start Battery Scan"):
 
         # Show results
         st.success(f"{emoji} Scan Complete - Battery is **{result}**")
-        st.write(f"**Voltage:** {v} V")
-        st.write(f"**Temperature:** {t} °C")
-        st.write(f"**Capacity:** {c} %")
-        st.write(f"**Charge Cycles:** {cyc}")
+        st.markdown("### 🔧 Battery Vitals")
+        col1, col2 = st.columns(2)
+        col1.metric("🔋 Voltage", f"{v} V")
+        col2.metric("🌡 Temperature", f"{t} °C")
+st.progress(min(c, 100))  # capacity bar
+
+st.markdown(f"**📈 Charge Cycles:** `{cyc}`")
+st.markdown(f"**🤖 AI Confidence:** `{round(proba * 100, 2)} %`")
         st.write(f"**AI Confidence Score:** {round(proba * 100, 2)}%")
 
         # Save to session log
@@ -70,6 +76,23 @@ if st.session_state.scan_log:
     # Export report
     csv = history_df.to_csv(index=False).encode('utf-8')
     st.download_button("⬇️ Download Report (CSV)", csv, "battery_scan_report.csv", "text/csv")
+    class PDF(FPDF):
+    def header(self):
+        self.set_font("Arial", "B", 14)
+        self.cell(200, 10, "Phoenix Cells Battery Scan Report", ln=True, align='C')
+
+    def generate(self, df):
+        self.set_font("Arial", "", 10)
+        for i in range(len(df)):
+            self.ln()
+            self.cell(0, 10, f"Scan {i+1} - {df.iloc[i].to_dict()}", ln=True)
+
+pdf = PDF()
+pdf.add_page()
+pdf.generate(history_df)
+pdf_output = pdf.output(dest='S').encode('latin1')
+
+st.download_button("⬇️ Download Report (PDF)", data=pdf_output, file_name="battery_report.pdf")
 
 # Footer
 st.markdown("---")

@@ -56,7 +56,7 @@ st.progress(min(c, 100))  # capacity bar
 
 st.markdown(f"**📈 Charge Cycles:** `{cyc}`")
 st.markdown(f"**🤖 AI Confidence:** `{round(proba * 100, 2)} %`")
-        st.write(f"**AI Confidence Score:** {round(proba * 100, 2)}%")
+st.write(f"**AI Confidence Score:** {round(proba * 100, 2)}%")
 
         # Save to session log
         st.session_state.scan_log.append({

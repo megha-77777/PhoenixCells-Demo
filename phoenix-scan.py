@@ -59,14 +59,14 @@ st.markdown(f"**🤖 AI Confidence:** `{round(proba * 100, 2)} %`")
 st.write(f"**AI Confidence Score:** {round(proba * 100, 2)}%")
 
         # Save to session log
-        st.session_state.scan_log.append({
-            "Voltage (V)": v,
-            "Temperature (°C)": t,
-            "Capacity (%)": c,
-            "Cycles": cyc,
-            "Prediction": result,
-            "Confidence (%)": round(proba * 100, 2)
-        })
+    st.session_state.scan_log.append({
+        "Voltage (V)": v,
+        "Temperature (°C)": t,
+        "Capacity (%)": c,
+        "Cycles": cyc,
+        "Prediction": result,
+        "Confidence (%)": round(proba * 100, 2)
+    })
 
 # Display scan history
 if st.session_state.scan_log:

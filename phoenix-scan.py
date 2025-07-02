@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from fpdf import FPDF
+from PIL import image
+import pytesseract
 import time
 import io
 

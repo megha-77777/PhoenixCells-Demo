@@ -4,3 +4,4 @@ scikit-learn
 opencv-python-headless
 pytesseract
 Pillow
+opencv-python-headless

@@ -71,6 +71,15 @@ st.markdown(f"**🤖 AI Confidence:** `{round(proba * 100, 2)} %`")
 # Display scan history
 if st.session_state.scan_log:
     st.markdown("---")
+st.subheader("📷 Scan Battery Label (OCR)")
+uploaded_image = st.camera_input("Take a photo of battery label")
+
+if uploaded_image is not None:
+    img = Image.open(uploaded_image)
+    text = pytesseract.image_to_string(img)
+    st.markdown("**🔍 Scanned Text from Battery Label:**")
+    st.code(text)
+    st.markdown("---")
     st.subheader("📄 Scan History")
     history_df = pd.DataFrame(st.session_state.scan_log)
     st.dataframe(history_df, use_container_width=True)

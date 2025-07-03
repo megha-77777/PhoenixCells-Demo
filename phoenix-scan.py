@@ -1,10 +1,9 @@
-
 import streamlit as st
 import pandas as pd
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from fpdf import FPDF
-from PIL import image
+from PIL import Image
 import pytesseract
 import time
 import io
@@ -52,25 +51,23 @@ if st.button("🔍 Start Battery Scan"):
         col1, col2 = st.columns(2)
         col1.metric("🔋 Voltage", f"{v} V")
         col2.metric("🌡 Temperature", f"{t} °C")
-st.progress(min(c, 100))  # capacity bar
+        st.progress(min(c, 100))  # capacity bar
 
-st.markdown(f"**📈 Charge Cycles:** `{cyc}`")
-st.markdown(f"**🤖 AI Confidence:** `{round(proba * 100, 2)} %`")
-st.write(f"**AI Confidence Score:** {round(proba * 100, 2)}%")
+        st.markdown(f"**📈 Charge Cycles:** `{cyc}`")
+        st.markdown(f"**🤖 AI Confidence:** `{round(proba * 100, 2)} %`")
 
-        # Save to session log
-    st.session_state.scan_log.append({
-        "Voltage (V)": v,
-        "Temperature (°C)": t,
-        "Capacity (%)": c,
-        "Cycles": cyc,
-        "Prediction": result,
-        "Confidence (%)": round(proba * 100, 2)
-    })
+        # Save to scan history
+        st.session_state.scan_log.append({
+            "Voltage (V)": v,
+            "Temperature (°C)": t,
+            "Capacity (%)": c,
+            "Cycles": cyc,
+            "Prediction": result,
+            "Confidence (%)": round(proba * 100, 2)
+        })
 
-# Display scan history
-if st.session_state.scan_log:
-    st.markdown("---")
+# OCR Camera Scanner
+st.markdown("---")
 st.subheader("📷 Scan Battery Label (OCR)")
 uploaded_image = st.camera_input("Take a photo of battery label")
 
@@ -79,32 +76,17 @@ if uploaded_image is not None:
     text = pytesseract.image_to_string(img)
     st.markdown("**🔍 Scanned Text from Battery Label:**")
     st.code(text)
+
+# Scan History Table + Downloads
+if st.session_state.scan_log:
     st.markdown("---")
     st.subheader("📄 Scan History")
     history_df = pd.DataFrame(st.session_state.scan_log)
     st.dataframe(history_df, use_container_width=True)
 
-    # Export report
+    # CSV Download
     csv = history_df.to_csv(index=False).encode('utf-8')
     st.download_button("⬇️ Download Report (CSV)", csv, "battery_scan_report.csv", "text/csv")
-    class PDF(FPDF):
-    def header(self):
-        self.set_font("Arial", "B", 14)
-        self.cell(200, 10, "Phoenix Cells Battery Scan Report", ln=True, align='C')
 
-    def generate(self, df):
-        self.set_font("Arial", "", 10)
-        for i in range(len(df)):
-            self.ln()
-            self.cell(0, 10, f"Scan {i+1} - {df.iloc[i].to_dict()}", ln=True)
-
-pdf = PDF()
-pdf.add_page()
-pdf.generate(history_df)
-pdf_output = pdf.output(dest='S').encode('latin1')
-
-st.download_button("⬇️ Download Report (PDF)", data=pdf_output, file_name="battery_report.pdf")
-
-# Footer
-st.markdown("---")
-st.caption("Phoenix Cells Demo | Team Catalyst Nexus")
+    # PDF Download
+    class PDF(FPDF

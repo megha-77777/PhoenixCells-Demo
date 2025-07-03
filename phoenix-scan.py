@@ -89,4 +89,4 @@ if st.session_state.scan_log:
     st.download_button("⬇️ Download Report (CSV)", csv, "battery_scan_report.csv", "text/csv")
 
     # PDF Download
-    class PDF(FPDF
+    class PDF(FPDF)
